@@ -1,0 +1,18 @@
+[package]
+org ="DSA_2"
+name = "express_delivery_service" 
+version = "0.1.0"
+distribution = "2201.3.1"
+
+[build-options]
+observabilityIncluded = true
+
+[[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "kafka"
+version = "2201.3.1"
+
+[[platform.java11.dependency]]
+groupId = "org.ballerinalang"
+artifactId = "mongodb"
+version = "2201.3.1"

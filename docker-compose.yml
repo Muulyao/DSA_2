@@ -1,0 +1,106 @@
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+
+  central-logistics-service:
+    build: ./central-logistics-service
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      - kafkaUrl=kafka:9092
+      - mongoUrl=mongodb://mongodb:27017/logistics
+    ports:
+      - "8080:8080"
+
+  client:
+    build: ./client
+    depends_on:
+      - central-logistics-service
+    environment:
+      - centralLogisticsUrl=http://central-logistics-service:8080
+
+  standard-delivery-service:
+    build: ./standard-delivery-service
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      - kafkaUrl=kafka:9092
+      - mongoUrl=mongodb://mongodb:27017/logistics
+
+  express-delivery-service:
+    build: ./express-delivery-service
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      - kafkaUrl=kafka:9092
+      - mongoUrl=mongodb://mongodb:27017/logistics
+
+  international-delivery-service:
+    build: ./international-delivery-service
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      - kafkaUrl=kafka:9092
+      - mongoUrl=mongodb://mongodb:27017/logistics
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
